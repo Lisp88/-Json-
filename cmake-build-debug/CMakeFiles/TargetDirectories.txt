@@ -1,0 +1,3 @@
+C:/Users/Shota/CLionProjects/Json_Study/cmake-build-debug/CMakeFiles/Json_Study.dir
+C:/Users/Shota/CLionProjects/Json_Study/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Shota/CLionProjects/Json_Study/cmake-build-debug/CMakeFiles/rebuild_cache.dir
