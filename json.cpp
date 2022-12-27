@@ -25,7 +25,7 @@ Json::Json(const char *v) : m_type(json_string) {
     m_value.mp_string = new std::string(v);
 }
 
-Json::Json(const std::string &v) {
+Json::Json(const std::string &v) : m_type(json_string){
     m_value.mp_string = new std::string(v);
 }
 
@@ -118,4 +118,36 @@ Json::operator const char *() {
         throw std::logic_error("type error, not string type");
     }
     return m_value.mp_string->c_str();
+}
+
+/// 重载[]操作符访问数组
+/// \param index 数组下标
+/// \return 数组下标指向的Json数据
+Json & Json::operator [] (int index){
+    if(m_type != json_array){
+        m_type = json_array;
+        m_value.mp_array = new std::vector<Json>;
+    }
+    if(index < 0){
+        throw std::logic_error("array's index < 0");
+    }
+    int size = (m_value.mp_array)->size();
+    //若下标大于当前容量，进行扩容填充空Json
+    if(index >= size){
+        for(int i = size; i <= index; ++i){
+            (m_value.mp_array)->push_back(Json());
+        }
+    }
+    return (m_value.mp_array)->at(index);
+}
+
+//方法
+/// 数组添加元素
+/// \param other Json数据
+void Json::append(const Json & other){
+    if(m_type != json_array){
+        m_type = json_array;
+        m_value.mp_array = new std::vector<Json>;
+    }
+    (m_value.mp_array)->push_back(other);
 }

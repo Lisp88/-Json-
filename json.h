@@ -44,7 +44,10 @@ namespace shotacon{
             operator double();
             operator const char *();
             operator std::string();
+            Json & operator [] (int index);
 
+            //方法
+            void append(const Json & other);
         private:
             union json_value{
                 bool m_bool;
