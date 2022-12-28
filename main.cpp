@@ -4,21 +4,18 @@
 using namespace shotacon::json;
 
 int main() {
-    Json j = false;
-    Json j1 = 1;
-    Json j2 = true;
-    Json j3 = 0.8;
-    Json j4 = "123";
+    Json j1 = 2;
+    Json j2 = 8.9;
+    Json j3 = false;
+    Json j4 = "不到";
+
     Json arr;
-    arr[0] = false;
-    arr[1] = 2.0;
-    arr[2] = 3.3;
-    //arr[3] = "不是我";
-    //arr.append("谁知道");
-    bool a = arr[0];
-    double b = arr[1];
-    std::string s = arr[2];
-    std::string c = arr[3];
-    //std::cout<<(a == false)<<b<<s<<c;
+    arr[1] = 7.9;
+    arr[2] = true;
+    arr[3] = "ada";
+    arr.append(5);
+
+
+    std::cout<<arr.get();
     return 0;
 }

@@ -58,8 +58,8 @@ Json::Json(json_type type) {
 
 //拷贝构造，对于数组，对象和字符串进行浅拷贝提升效率
 Json::Json(const Json &v) {
-    json_type type = v.m_type;
-    switch (type) {
+    m_type = v.m_type;
+    switch (m_type) {
         case json_null:
             break;
         case json_bool:
@@ -132,6 +132,8 @@ Json & Json::operator [] (int index){
         throw std::logic_error("array's index < 0");
     }
     int size = (m_value.mp_array)->size();
+//    if(index >= size)
+//        throw std::logic_error("index over bound");
     //若下标大于当前容量，进行扩容填充空Json
     if(index >= size){
         for(int i = size; i <= index; ++i){
@@ -150,4 +152,67 @@ void Json::append(const Json & other){
         m_value.mp_array = new std::vector<Json>;
     }
     (m_value.mp_array)->push_back(other);
+}
+
+/// 以string返回Json内容
+/// \return
+std::string Json::get() const {
+    std::stringstream ss;
+    switch (m_type) {
+        case json_null:
+            ss << "null";
+            break;
+        case json_bool:
+            if(m_value.m_bool)
+                ss << "true";
+            else
+                ss << "false";
+        case json_int:
+            ss << m_value.m_int;
+            break;
+        case json_double:
+            ss << m_value.m_double;
+            break;
+        case json_string:
+            ss << "\"" << *m_value.mp_string << "\"";
+            break;
+        case json_array:
+            ss << "[";
+            for(auto it = m_value.mp_array->begin(); it != m_value.mp_array->end(); ++it){
+                if(it != (m_value.mp_array)->begin()){
+                    ss << ", ";
+                }
+                ss << it->get();
+            }
+            ss << "]";
+            break;
+        case json_object:
+            ss << "{";
+            for(auto it = m_value.mp_object->begin(); it != m_value.mp_object->end(); ++it){
+                if(it != m_value.mp_object->begin()){
+                    ss << ", ";
+                }
+                ss << "\"" << it->first << "\"" << ":" << it->second.get();
+            }
+            ss << "}";
+            break;
+        default:
+            break;
+    }
+    return ss.str();
+}
+
+/// 重载Json对象的[]访问符
+/// \param key json_object数据的key值，C风格字符串
+/// \return
+Json & Json::operator [] (const char * key){
+    std::string name(key);
+    return ((*(this))[name]);
+}
+
+/// 重载Json对象的[]访问符
+/// \param key json_object数据的key值，C++风格字符串
+/// \return
+Json & Json::operator [] (const std::string & key){
+    return ((*m_value.mp_object)[key]);//无key插入，有key修改
 }

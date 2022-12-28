@@ -10,6 +10,7 @@
 #include "memory"
 #include "string"
 #include "stdexcept"
+#include "sstream"
 
 namespace shotacon{
     namespace json{
@@ -45,9 +46,13 @@ namespace shotacon{
             operator const char *();
             operator std::string();
             Json & operator [] (int index);
+            Json & operator [] (const char * key);
+            Json & operator [] (const std::string & key);
 
             //方法
             void append(const Json & other);
+            std::string get() const;
+
         private:
             union json_value{
                 bool m_bool;
