@@ -4,18 +4,12 @@
 using namespace shotacon::json;
 
 int main() {
-    Json j1 = 2;
-    Json j2 = 8.9;
-    Json j3 = false;
-    Json j4 = "不到";
+    Json j;
+    j[0] = "123";
+    j[1] = 89.9;
+    j[3] = false;
+    j[4].deep_copy(j);
+    std::cout<<j.get();
 
-    Json arr;
-    arr[1] = 7.9;
-    arr[2] = true;
-    arr[3] = "ada";
-    arr.append(5);
-
-
-    std::cout<<arr.get();
     return 0;
 }
