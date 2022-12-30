@@ -3,4 +3,4 @@ project(Json_Study)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Json_Study main.cpp json.cpp json.h)
+add_executable(Json_Study main.cpp json.cpp json.h parser.cpp parser.h)
