@@ -256,6 +256,10 @@ void Json::deep_copy(const Json &j) {
             break;
         case json_object:
             m_value.mp_object = new std::map<std::string, Json>(*(j.m_value.mp_object));
+            for(auto it1 = m_value.mp_object->begin(), it2 = j.m_value.mp_object->begin();
+            it1 != m_value.mp_object->end() && it2 != j.m_value.mp_object->end(); ++it1, ++it2){
+                it1->second.deep_copy(it2->second);
+            }
             break;
         default:
             break;
@@ -277,7 +281,6 @@ void Json::clear(){
         case json_null:
             break;
         case json_string:
-            if(m_value.mp_string)
             delete m_value.mp_string;
             m_value.mp_string = nullptr;
             break;
@@ -285,15 +288,13 @@ void Json::clear(){
             for(auto & it : (*m_value.mp_array)){
                 it.clear();
             }
-            if(m_value.mp_array)
-                delete m_value.mp_array;
+            delete m_value.mp_array;
             m_value.mp_array = nullptr;
             break;
         case json_object:
             for(auto & it : (*m_value.mp_object)){
                 it.second.clear();
             }
-            if(m_value.mp_object)
             delete m_value.mp_object;
             m_value.mp_object = nullptr;
             break;
@@ -388,7 +389,7 @@ bool Json::has(const std::string & key) const{
     return m_value.mp_object->count(key);
 }
 
-/// 删除Json中指定数据
+/// 删除Json中指定数据（会清除指向的空间，浅拷贝）
 /// \param index 参数为数组下标或者对象key
 /// \return 删除是否成功
 bool Json::remove(int index) const {
