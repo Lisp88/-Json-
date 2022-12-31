@@ -2,6 +2,7 @@
 // Created by Shota on 2022/12/27.
 //
 #include "json.h"
+#include "parser.h"
 
 using namespace shotacon::json;
 
@@ -410,3 +411,8 @@ bool Json::remove(const std::string &key) const {
     return true;
 }
 
+void Json::parser(const std::string & str){
+    Parser p;
+    p.load(str);
+    *this = p.parse();
+}

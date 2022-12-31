@@ -104,6 +104,8 @@ namespace shotacon {
             bool remove(int index) const;
             bool remove(const char * key) const;
             bool remove(const std::string & key) const;
+
+            void parser(const std::string & str);
         private:
             union json_value {
                 bool m_bool;
