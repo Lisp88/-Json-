@@ -174,7 +174,7 @@ std::string Json::get() const {
                 if(it != m_value.mp_object->begin()){
                     ss << ", ";
                 }
-                ss << "\"" << it->first << "\"" << ":" << it->second.get();
+                ss << "\"" << it->first << "\"" << " : " << it->second.get();
             }
             ss << "}";
             break;
@@ -380,7 +380,7 @@ bool Json::has(int index) const{
 }
 
 bool Json::has(const char * key) const{
-    has(std::string(key));
+    return has(std::string(key));
 }
 
 bool Json::has(const std::string & key) const{
@@ -415,4 +415,8 @@ void Json::parser(const std::string & str){
     Parser p;
     p.load(str);
     *this = p.parse();
+}
+
+void Json::parser(const char * str){
+    parser(std::string(str));
 }
