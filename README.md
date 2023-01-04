@@ -28,3 +28,9 @@
 2. **常用方法 :**
     * load : 传入字符串，拷贝到成员变量内
     * parse : 对成员变量内的字符串进行解析
+    
+**测试图片**
+* 测试代码
+![测试代码](https://github.com/Laity8/picture_resource_resort/blob/master/json_repository/code_test.png)
+* 运行结果
+![运行结果](https://github.com/Laity8/picture_resource_resort/blob/master/json_repository/run_result.png)
