@@ -1,5 +1,5 @@
 # -Json-
-自己实现一个Json库，用于Json格式的解析，速度较快
+自己实现一个Json库，用于Json格式的解析，速度较快，直接拿json.cpp和json.h就能使用
 ## Json解析库简介
 该Json解析库支持将Json格式的字符串解析为Json对象。
 
