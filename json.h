@@ -46,7 +46,7 @@ namespace shotacon {
 
             Json(json_type type);//自定义json的类型
 
-            ~Json(){
+            ~Json() {
 
             }
 
@@ -70,16 +70,16 @@ namespace shotacon {
 
             Json &operator[](const std::string &key);
 
-            void operator = (const Json & j);
+            void operator=(const Json &j);
 
-            bool operator == (const Json & j);
+            bool operator==(const Json &j);
 
-            bool operator != (const Json & j);
+            bool operator!=(const Json &j);
 
             //方法
             void append(const Json &other);
 
-            std::string get() const;
+            std::string get(int n = 0) const;
 
             void shallow_copy(const Json &j);
 
@@ -89,24 +89,36 @@ namespace shotacon {
 
             int size() const;
 
-            bool is_null() const { return m_type == json_null;}
-            bool is_bool() const { return m_type == json_bool;}
-            bool is_int() const { return m_type == json_int;}
-            bool is_double() const { return m_type == json_double;}
-            bool is_string() const { return m_type == json_string;}
-            bool is_array() const { return m_type == json_array;}
-            bool is_object() const { return m_type == json_object;}
+            bool is_null() const { return m_type == json_null; }
+
+            bool is_bool() const { return m_type == json_bool; }
+
+            bool is_int() const { return m_type == json_int; }
+
+            bool is_double() const { return m_type == json_double; }
+
+            bool is_string() const { return m_type == json_string; }
+
+            bool is_array() const { return m_type == json_array; }
+
+            bool is_object() const { return m_type == json_object; }
 
             bool has(int index) const;
-            bool has(const char * key) const;
-            bool has(const std::string & key) const;
+
+            bool has(const char *key) const;
+
+            bool has(const std::string &key) const;
 
             bool remove(int index) const;
-            bool remove(const char * key) const;
-            bool remove(const std::string & key) const;
 
-            void parser(const std::string & str);
-            void parser(const char * str);
+            bool remove(const char *key) const;
+
+            bool remove(const std::string &key) const;
+
+            void parser(const std::string &str);
+
+            void parser(const char *str);
+
         private:
             union json_value {
                 bool m_bool;
@@ -118,6 +130,36 @@ namespace shotacon {
             };
             json_type m_type;
             json_value m_value;
+        };
+
+        class Parser {
+        public:
+            Parser();
+
+            void load(const std::string &str);
+
+            Json parse();
+
+        private:
+            Json parse_null();
+
+            Json parse_number();
+
+            Json parse_bool();
+
+            std::string parse_string();
+
+            Json parse_array();
+
+            Json parse_object();
+
+            char skip_space();
+
+            char get_next_json();
+
+        private:
+            std::string m_str;
+            int m_index;
         };
     }
 }
