@@ -61,12 +61,6 @@ build CMakeFiles/Json_Study.dir/json.cpp.obj: CXX_COMPILER__Json_Study_Debug C$:
   OBJECT_DIR = CMakeFiles\Json_Study.dir
   OBJECT_FILE_DIR = CMakeFiles\Json_Study.dir
 
-build CMakeFiles/Json_Study.dir/parser.cpp.obj: CXX_COMPILER__Json_Study_Debug C$:/Users/Shota/CLionProjects/Json_Study/parser.cpp || cmake_object_order_depends_target_Json_Study
-  DEP_FILE = CMakeFiles\Json_Study.dir\parser.cpp.obj.d
-  FLAGS = -g -std=gnu++14
-  OBJECT_DIR = CMakeFiles\Json_Study.dir
-  OBJECT_FILE_DIR = CMakeFiles\Json_Study.dir
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Json_Study
@@ -75,7 +69,7 @@ build CMakeFiles/Json_Study.dir/parser.cpp.obj: CXX_COMPILER__Json_Study_Debug C
 #############################################
 # Link the executable Json_Study.exe
 
-build Json_Study.exe: CXX_EXECUTABLE_LINKER__Json_Study_Debug CMakeFiles/Json_Study.dir/main.cpp.obj CMakeFiles/Json_Study.dir/json.cpp.obj CMakeFiles/Json_Study.dir/parser.cpp.obj
+build Json_Study.exe: CXX_EXECUTABLE_LINKER__Json_Study_Debug CMakeFiles/Json_Study.dir/main.cpp.obj CMakeFiles/Json_Study.dir/json.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Json_Study.dir

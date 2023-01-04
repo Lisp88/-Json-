@@ -2,11 +2,9 @@
 // Created by Shota on 2022/12/27.
 //
 #include "json.h"
-#include "parser.h"
 
 using namespace shotacon::json;
 
-//构造函数
 Json::Json() : m_type(json_null) {
     m_value.m_int = 0;
 }
@@ -33,6 +31,7 @@ Json::Json(const std::string &v) : m_type(json_string){
 }
 
 Json::Json(json_type type) {
+    m_type = type;
     switch (type) {
         case json_null:
             break;
@@ -136,8 +135,10 @@ void Json::append(const Json & other){
 }
 
 /// 以string返回Json内容
+/// \param n 通过记录递归层数来控制制表符的次数
 /// \return
-std::string Json::get() const {
+std::string Json::get(int n) const {
+    int c = n;
     std::stringstream ss;
     switch (m_type) {
         case json_null:
@@ -159,22 +160,40 @@ std::string Json::get() const {
             ss << "\"" << *m_value.mp_string << "\"";
             break;
         case json_array:
-            ss << "[";
+            ss << "[\n";
             for(auto it = m_value.mp_array->begin(); it != m_value.mp_array->end(); ++it){
+                c = n;
                 if(it != (m_value.mp_array)->begin()){
-                    ss << ", ";
+                    ss << ",\n";
                 }
-                ss << it->get();
+                while(c--){
+                    ss << "\t";
+                }
+                ss << "\t" << it->get(n+1);
+            }
+            c = n;
+            ss << "\n";
+            while(c--){
+                ss << "\t";
             }
             ss << "]";
             break;
         case json_object:
-            ss << "{";
+            ss << "{\n";
             for(auto it = m_value.mp_object->begin(); it != m_value.mp_object->end(); ++it){
+                c = n;
                 if(it != m_value.mp_object->begin()){
-                    ss << ", ";
+                    ss << ",\n";
                 }
-                ss << "\"" << it->first << "\"" << " : " << it->second.get();
+                while(c--){
+                    ss << "\t";
+                }
+                ss << "\t\"" << it->first << "\"" << ": " << it->second.get(n+1);
+            }
+            c = n;
+            ss << "\n";
+            while(c--){
+                ss << "\t";
             }
             ss << "}";
             break;
@@ -419,4 +438,129 @@ void Json::parser(const std::string & str){
 
 void Json::parser(const char * str){
     parser(std::string(str));
+}
+//----解析部分
+
+Parser::Parser() : m_str(""), m_index(0){
+
+}
+
+void Parser::load(const std::string & str){
+    m_str = str;
+    m_index = 0;
+}
+
+Json Parser::parse() {
+    skip_space();
+    char ch = m_str[m_index];
+
+    if(ch == '-' || std::isdigit(ch)) {
+        return parse_number();
+    }else if(ch == 'n') return parse_null();
+    else if(ch == 't' || ch == 'f') return parse_bool();
+    else if(ch == '"') return parse_string();
+    else if(ch == '[') return parse_array();
+    else if(ch == '{') return parse_object();
+
+    throw std::logic_error("Parser::parse >> type non match");
+}
+
+char Parser::skip_space(){
+    while(m_str[m_index] == ' ' || m_str[m_index] == '\n' || m_str[m_index] == '\r' || m_str[m_index] == '\t') ++m_index;
+    return m_str[m_index];
+}
+
+char Parser::get_next_json(){
+    skip_space();
+    //return m_str[m_index++];
+    return m_str[m_index];
+}
+
+Json Parser::parse_null() {
+    if(m_str.compare(m_index, 4, "null") == 0) {
+        m_index += 4;
+        return Json();
+    }
+    throw std::logic_error("Parser::parse >> type non match");
+}
+
+Json Parser::parse_number() {
+    int pos = m_index;
+    int count = 0;
+    if(m_str[m_index] == '-'){
+        count++;
+        m_index++;
+    }
+
+    bool is_double = false;
+    while(m_str[m_index] == '.' || std::isalnum(m_str[m_index]) ){
+        if(m_str[m_index++] == '.') is_double = true;
+        ++count;
+    }
+    std::string number = m_str.substr(pos, count);
+    if(is_double)
+        return Json(std::stod(number));
+    else
+        return Json(std::stoi(number));
+}
+
+Json Parser::parse_bool() {
+    if(m_str.compare(m_index, 4, "true") == 0){
+        m_index += 4;
+        return Json(true);
+    }
+
+    else if(m_str.compare(m_index, 5, "false") == 0){
+        m_index += 5;
+        return Json(false);
+    }
+    throw std::logic_error("Parser::parse >> type non match");
+}
+
+std::string Parser::parse_string() {
+    std::string out;
+    while(1){
+        char ch = m_str[++m_index];
+        if(ch == '"') break;
+        out += ch;
+    }
+    ++m_index;//脱离字符串，指向引号下一位
+    return out;
+}
+
+Json Parser::parse_array() {
+    Json arr(Json::json_array);
+    ++m_index;
+    char ch = skip_space();
+    if(ch == ']') return arr;
+    while(1){
+        arr.append(parse());
+        ch = skip_space();
+        if(ch == ']') break;
+        if(m_str[m_index++] != ',') throw std::logic_error("Parser :: parse_array >> ',' isn't exist");//++越过 ','
+        ch = skip_space();
+    }
+    ++m_index;//越过数组范围，跳过']'
+    return arr;
+}
+
+Json Parser::parse_object() {
+    Json obj(Json::json_object);
+    ++m_index;//越过'{'
+    char ch = skip_space();
+    if(ch == '}') return obj;
+    while(1){
+        if(ch != '"') throw std::logic_error("Parse::parse_object >> key type is error");
+        std::string key = parse_string();
+        ch = skip_space();
+        if(ch != ':') throw std::logic_error("Parse::parse_object >>  ':' isn't exist");
+        ++m_index;//越过 ':'
+        obj[key] = parse();
+        ch = skip_space();
+        if(ch == '}') break;
+        if(m_str[m_index++] != ',') throw std::logic_error("Parser :: parse_object >> ',' isn't exist");//++越过 ','
+        ch = skip_space();
+    }
+    ++m_index;//越过'}'
+    return obj;
 }
